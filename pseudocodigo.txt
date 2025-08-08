@@ -1,0 +1,30 @@
+INICIO
+
+MIENTRAS True HACER
+    IMPRIMIR "====== GESTOR DE NOTAS ACADÉMICAS ======"
+    IMPRIMIR "1. Registrar nuevo curso"
+    IMPRIMIR "2. Mostrar todos los cursos y notas"
+    IMPRIMIR "3. Calcular promedio general"
+    IMPRIMIR "4. Contar cursos aprobados y reprobados"
+    IMPRIMIR "5. Salir"
+
+    IMPRIMIR "Seleccione una opción:"
+    LEER opcion
+
+    SI opcion = 1 ENTONCES
+        <registrar nuevo curso>
+    SINO SI opcion = 2 ENTONCES
+        <mostrar todos los cursos>
+    SINO SI opcion = 3 ENTONCES
+        <calcular promedio general>
+    SINO SI opcion = 4 ENTONCES
+        <contar aprobados y reprobados>
+    SINO SI opcion = 5 ENTONCES
+        IMPRIMIR "Gracias por usar el Gestor de Notas Académicas."
+        SALIR DEL PROGRAMA
+    SINO
+        IMPRIMIR "Opción inválida, por favor intente de nuevo."
+    FIN_SI
+FIN_MIENTRAS
+
+FIN
