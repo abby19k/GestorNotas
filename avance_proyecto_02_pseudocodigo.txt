@@ -1,0 +1,39 @@
+INICIO
+    # Lista para guardar las notas
+    CREAR lista_notas VACÍA
+
+    # Bucle principal para registrar notas
+    MIENTRAS True HACER
+        IMPRIMIR "Ingrese una nota entre 0 y 100 (o escriba 'fin' para terminar): "
+        LEER entrada
+
+        SI entrada = "fin" ENTONCES
+            SALIR DEL BUCLE
+        SINO
+            # Validación: verificar que la entrada sea numérica
+            SI entrada ES NUMÉRICA ENTONCES
+                CONVERTIR entrada A número -> nota
+                SI nota >= 0 Y nota <= 100 ENTONCES
+                    AGREGAR nota A lista_notas
+                SINO
+                    IMPRIMIR "Error: la nota debe estar entre 0 y 100."
+                FIN_SI
+            SINO
+                IMPRIMIR "Error: debe ingresar un número válido."
+            FIN_SI
+        FIN_SI
+    FIN_MIENTRAS
+
+    # Calcular promedio si hay notas registradas
+    SI longitud(lista_notas) > 0 ENTONCES
+        suma ← 0
+        PARA cada nota EN lista_notas HACER
+            suma ← suma + nota
+        FIN_PARA
+
+        promedio ← suma / longitud(lista_notas)
+        IMPRIMIR "El promedio de las notas registradas es: ", promedio
+    SINO
+        IMPRIMIR "No se registraron notas, no es posible calcular promedio."
+    FIN_SI
+FIN
