@@ -23,3 +23,22 @@ El sistema permitirá realizar las siguientes acciones:
 - Estará desarrollado en Python, sin usar librerías externas.
 - Utilizará estructuras de control básicas como condicionales (`if`, `else`) y bucles (`while`).
 - El menú estará controlado por un bucle que repetirá las opciones hasta que el usuario decida salir.
+
+## Avance de Proyecto 04 - Eliminación de cursos, uso de listas, funciones y modularización
+
+**Resumen de lo implementado en esta fase:**
+
+- Se implementó la función `eliminar_curso()` para borrar un curso registrado.
+  - La búsqueda permite coincidencia parcial y no distingue mayúsculas/minúsculas.
+  - Si hay varias coincidencias, el usuario puede seleccionar cuál eliminar.
+  - Antes de eliminar se pide confirmación (s/n).
+- Se evidencia un uso claro de **listas**: `cursos` es la estructura principal (lista de diccionarios).
+- El código está **modularizado** en funciones: utilidades, operaciones sobre la lista y menú.
+- Se mantienen validaciones: nombre no vacío, nota numérica en rango 0–100.
+- Mensajes al usuario y pausas para facilitar la interacción en consola.
+
+**Cómo probar localmente**
+1. Ejecutar `python gestor_notas.py`.
+2. Registrar algunos cursos (opción 1).
+3. Usar la opción 7 para eliminar un curso y verificar con la opción 2 que desapareció.
+
