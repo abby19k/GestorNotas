@@ -1,13 +1,16 @@
 # gestor_notas.py
 # -------------------------------------------------------------
-# Gestor de Notas Académicas - Fase 4
-# Autor: Kleyver Josué Lapoyeu Martínez
+# Gestor de Notas Académicas - Fase 5
+# Autor: Kleyver
 # Descripción:
-#   Versión del programa con eliminación de cursos, uso claro de listas,
-#   y modularización por funciones. Mantiene registro y operación por menú.
+#   Añade soporte para pila (historial de cambios), cola (revisiones),
+#   y ordenamientos: burbuja (por nota, descendente) e inserción (por nombre, ascendente).
 # -------------------------------------------------------------
 
-cursos = []  # Lista principal: cada elemento es {"nombre": str, "nota": float}
+# Estructuras principales
+cursos = []            # Lista de cursos: {"nombre": str, "nota": float}
+historial = []         # Pila: registros de acciones (append = push, mostrar en LIFO)
+cola_revisiones = []   # Cola: nombres de cursos pendientes de revisión (append = enqueue, pop(0) = dequeue)
 
 
 # --------------------------- Utilidades ---------------------------
@@ -34,12 +37,49 @@ def pausar():
     input("\nPresione Enter para continuar...")
 
 
+# --------------------------- Historial (Pila) ---------------------------
+def push_historial(mensaje):
+    """Agrega un mensaje a la pila de historial."""
+    historial.append(mensaje)
+
+
+def ver_historial():
+    """Muestra el historial en orden inverso (último cambio primero)."""
+    if not historial:
+        print("No hay historial de cambios.")
+        return
+    print("\nHistorial de cambios (más reciente primero):")
+    for i, msg in enumerate(reversed(historial), start=1):
+        print(f"{i}. {msg}")
+
+
+# --------------------------- Cola de revisiones (FIFO) ---------------------------
+def encolar_revision(nombre_curso):
+    """Agrega el nombre del curso a la cola de revisiones si no está ya en ella."""
+    nombre_norm = normalizar(nombre_curso)
+    if any(normalizar(x) == nombre_norm for x in cola_revisiones):
+        print(f"'{nombre_curso}' ya está en la cola de revisiones.")
+        return
+    cola_revisiones.append(nombre_curso)
+    print(f"'{nombre_curso}' agregado a la cola de revisiones.")
+    push_historial(f"Se encoló a revisión: {nombre_curso}")
+
+
+def procesar_cola_revisiones():
+    """Procesa y vacía la cola mostrando cada curso en orden FIFO."""
+    if not cola_revisiones:
+        print("La cola de revisiones está vacía.")
+        return
+    print("\nProcesando solicitudes de revisión:")
+    while cola_revisiones:
+        curso = cola_revisiones.pop(0)  # dequeue
+        print(f"Revisando: {curso}")
+    print("Cola de revisiones procesada.")
+
+
 # --------------------------- Operaciones sobre la lista 'cursos' ---------------------------
 def existe_curso(nombre):
-    """
-    Verifica si existe un curso por nombre (case-insensitive).
-    Retorna el índice del primer curso encontrado o None si no existe.
-    """
+    """Retorna el índice del curso con nombre exacto (case-insensitive) o None si no existe."""
     nombre_norm = normalizar(nombre)
     for idx, c in enumerate(cursos):
         if normalizar(c["nombre"]) == nombre_norm:
@@ -48,7 +88,7 @@ def existe_curso(nombre):
 
 
 def registrar_curso():
-    """Registrar un curso nuevo (no bloquea si ya existe; avisa si existe)."""
+    """Registrar un curso nuevo; si la nota es baja lo encola para revisión."""
     nombre = input("Ingrese el nombre del curso: ").strip()
     if not nombre:
         print("El nombre del curso no puede estar vacío.")
@@ -62,6 +102,11 @@ def registrar_curso():
     nota = leer_nota()
     cursos.append({"nombre": nombre, "nota": nota})
     print("Curso registrado con éxito.")
+    push_historial(f"Se registró: {nombre} - Nota: {nota}")
+
+    # Regla adicional: si la nota es menor a 60, sugerimos encolarlo para revisión
+    if nota < 60:
+        encolar_revision(nombre)
 
 
 def mostrar_cursos():
@@ -151,9 +196,15 @@ def actualizar_nota():
             else:
                 print("Opción inválida. Intente de nuevo.")
 
+    nota_anterior = cursos[idx]["nota"]
     nueva_nota = leer_nota()
     cursos[idx]["nota"] = nueva_nota
     print(f"Nota actualizada correctamente: {cursos[idx]['nombre']} → {nueva_nota}")
+    push_historial(f"Se actualizó: {cursos[idx]['nombre']} - Nota anterior: {nota_anterior} → Nueva nota: {nueva_nota}")
+
+    # Si la nueva nota es baja, encolar para revisión
+    if nueva_nota < 60:
+        encolar_revision(cursos[idx]["nombre"])
 
 
 def eliminar_curso():
@@ -196,13 +247,59 @@ def eliminar_curso():
     if confirm == "s":
         eliminado = cursos.pop(idx)
         print(f"Curso eliminado correctamente: {eliminado['nombre']} - Nota: {eliminado['nota']}")
+        push_historial(f"Se eliminó: {eliminado['nombre']} - Nota: {eliminado['nota']}")
+        # Si estaba en la cola de revisiones, eliminarlo de la cola
+        nombre_norm = normalizar(eliminado['nombre'])
+        cola_revisiones[:] = [x for x in cola_revisiones if normalizar(x) != nombre_norm]
     else:
         print("Eliminación cancelada.")
 
 
-# --------------------------- Menú principal ---------------------------
+# --------------------------- Ordenamientos (no modifican 'cursos') ---------------------------
+def bubble_sort_by_note_desc(lista_cursos):
+    """Burbuja: ordena por nota de mayor a menor y devuelve una copia ordenada."""
+    arr = [dict(c) for c in lista_cursos]  # copia por valor
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j]["nota"] < arr[j + 1]["nota"]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+
+def insertion_sort_by_name_asc(lista_cursos):
+    """Inserción: ordena por nombre A-Z y devuelve una copia ordenada."""
+    arr = [dict(c) for c in lista_cursos]
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and normalizar(arr[j]["nombre"]) > normalizar(key["nombre"]):
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+
+def mostrar_ordenamientos():
+    """Muestra los resultados de ambos ordenamientos sin modificar la lista original."""
+    if not cursos:
+        print("No hay cursos registrados para ordenar.")
+        return
+
+    print("\n--- Ordenamiento (Burbuja) por nota (descendente) ---")
+    orden_burbuja = bubble_sort_by_note_desc(cursos)
+    for i, c in enumerate(orden_burbuja, start=1):
+        print(f"{i}. {c['nombre']} - Nota: {c['nota']}")
+
+    print("\n--- Ordenamiento (Inserción) por nombre (A-Z) ---")
+    orden_insercion = insertion_sort_by_name_asc(cursos)
+    for i, c in enumerate(orden_insercion, start=1):
+        print(f"{i}. {c['nombre']} - Nota: {c['nota']}")
+
+
+# --------------------------- Menú principal (actualizado para Fase 5) ---------------------------
 def mostrar_menu():
-    print("\n====== GESTOR DE NOTAS ACADÉMICAS (Fase 4) ======")
+    print("\n====== GESTOR DE NOTAS ACADÉMICAS (Fase 5) ======")
     print("1. Registrar nuevo curso")
     print("2. Mostrar todos los cursos y notas")
     print("3. Calcular promedio general")
@@ -210,7 +307,11 @@ def mostrar_menu():
     print("5. Buscar curso por nombre (búsqueda lineal)")
     print("6. Actualizar nota de un curso")
     print("7. Eliminar un curso")
-    print("8. Salir")
+    print("8. Mostrar historial de cambios (pila)")
+    print("9. Agregar curso a cola de revisión (manual)")
+    print("10. Procesar cola de revisiones (simulación)")
+    print("11. Mostrar ordenamientos (burbuja e inserción)")
+    print("12. Salir")
 
 
 def ejecutar_menu():
@@ -240,6 +341,22 @@ def ejecutar_menu():
             eliminar_curso()
             pausar()
         elif opcion == "8":
+            ver_historial()
+            pausar()
+        elif opcion == "9":
+            nombre = input("Ingrese el nombre del curso para agregar a la cola de revisión: ").strip()
+            if nombre:
+                encolar_revision(nombre)
+            else:
+                print("Nombre vacío, no se agregó a la cola.")
+            pausar()
+        elif opcion == "10":
+            procesar_cola_revisiones()
+            pausar()
+        elif opcion == "11":
+            mostrar_ordenamientos()
+            pausar()
+        elif opcion == "12":
             print("Gracias por usar el Gestor de Notas Académicas. ¡Hasta pronto!")
             break
         else:
