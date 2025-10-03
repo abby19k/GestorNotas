@@ -42,3 +42,21 @@ El sistema permitirá realizar las siguientes acciones:
 2. Registrar algunos cursos (opción 1).
 3. Usar la opción 7 para eliminar un curso y verificar con la opción 2 que desapareció.
 
+
+## Avance de Proyecto 05 - Pilas, Colas y Ordenamientos
+
+En esta fase se implementaron:
+
+- **Historial (pila)**: registro de acciones (registro, actualización, eliminación, encolado).
+- **Cola de revisiones (FIFO)**: gestión de solicitudes de revisión; opción para procesar la cola.
+- **Ordenamientos**:
+  - Burbuja: ordena por nota (mayor → menor).
+  - Inserción: ordena por nombre (A → Z).
+- Integración de la pila y cola en las funciones principales (registro, actualización, eliminación).
+
+**Cómo probar**
+1. Ejecutar `python gestor_notas.py`.
+2. Registrar cursos y usar las opciones 8, 9, 10 y 11 del menú para verificar historial, cola y ordenamientos.
+
+
+
