@@ -54,9 +54,23 @@ En esta fase se implementaron:
   - Inserción: ordena por nombre (A → Z).
 - Integración de la pila y cola en las funciones principales (registro, actualización, eliminación).
 
-**Cómo probar**
+Cómo probar
 1. Ejecutar `python gestor_notas.py`.
 2. Registrar cursos y usar las opciones 8, 9, 10 y 11 del menú para verificar historial, cola y ordenamientos.
+
+
+Reflexión Personal
+
+**¿Qué aprendí con este proyecto?**  
+Aprendí a aplicar estructuras de datos básicas como listas, pilas y colas dentro de un programa funcional. También entendí cómo se integran los algoritmos de ordenamiento y búsqueda en un sistema real.
+
+**¿Qué fue lo más desafiante de resolver?**  
+Lo más complicado fue organizar todas las funciones para que trabajaran juntas sin errores y manejar correctamente las validaciones de datos y las estructuras.
+
+**¿Qué mejoraría si tuviera más tiempo?**  
+Me gustaría agregar almacenamiento permanente en archivos o una pequeña interfaz gráfica para hacerlo más interactivo.
+
+
 
 
 
