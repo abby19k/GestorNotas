@@ -65,10 +65,11 @@ Reflexión Personal
 Aprendí a aplicar estructuras de datos básicas como listas, pilas y colas dentro de un programa funcional. También entendí cómo se integran los algoritmos de ordenamiento y búsqueda en un sistema real.
 
 **¿Qué fue lo más desafiante de resolver?**  
-Lo más complicado fue organizar todas las funciones para que trabajaran juntas sin errores y manejar correctamente las validaciones de datos y las estructuras.
+Que todas las funciones no me dieran error al ejecutar las opciones del menú.
 
 **¿Qué mejoraría si tuviera más tiempo?**  
-Me gustaría agregar almacenamiento permanente en archivos o una pequeña interfaz gráfica para hacerlo más interactivo.
+Un menú con mejor interfaz.
+
 
 
 
